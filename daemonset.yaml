@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: log-pids
+spec:
+  selector:
+    matchLabels:
+      app: log-pids
+  template:
+    metadata:
+      labels:
+        app: log-pids
+    spec:
+      hostPID: true
+      imagePullPolicy: Always
+      containers:
+      - name: log-pids
+        image: quay.io/bostrt/log-pids:latest
+        volumeMounts:
+          - mountPath: /data
+            name: myvol
+      terminationGracePeriodSeconds: 1200  # Adjust as needed to reproduce slow shutdown or pod termination problems.
+      volumes:
+        - name: myvol
+          hostPath:
+            path: /var/lib/log-pids
+            type: DirectoryOrCreate
